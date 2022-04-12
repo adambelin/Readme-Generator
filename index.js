@@ -1,6 +1,10 @@
 // TODO: Include packages needed for this application
 const inquirer = require("inquirer");
-const generateMarkdown = require('./utils/generateMarkdown.js')
+const generateMarkdown = require('./Develop/utils/generateMarkdown')
+const fs = require('fs');
+
+let title = null
+let description = null
 
 // TODO: Create an array of questions for user input
 const questions = () => {
@@ -24,6 +28,7 @@ const questions = () => {
             message: 'What is the title of your project?',
             validate: projectTitle => {
                 if (projectTitle) {
+                    title = projectTitle
                     return true;
                 } else {
                     console.log("Please enter a valid project title")
@@ -37,6 +42,7 @@ const questions = () => {
             message: 'Give a description of your project',
             validate: descriptionEntry => {
                 if (descriptionEntry) {
+                    description = descriptionEntry
                     return true;
                 } else {
                     console.log("Please provide a description of your project.")
@@ -56,7 +62,11 @@ const questions = () => {
             message: 'Please enter your installation steps.',
             when: ({ confirmInstallGuide }) => {
                 if (confirmInstallGuide) {
-                    return true;
+                    writeToFile('readme.md', {
+                        title: title, 
+                        description: description,
+                    })
+                    return true; 
                 } else {
                     return false;
                 }
@@ -65,10 +75,14 @@ const questions = () => {
     ])
 }
 
-                
+questions()
 
 // TODO: Create a function to write README file
-function writeToFile(fileName, data) {}
+function writeToFile(fileName, data) {
+    fs.writeFile(fileName, generateMarkdown(data), err => {
+
+    });
+}
 
 // TODO: Create a function to initialize app
 function init() {}
