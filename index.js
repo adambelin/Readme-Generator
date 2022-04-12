@@ -3,9 +3,6 @@ const inquirer = require("inquirer");
 const generateMarkdown = require('./Develop/utils/generateMarkdown')
 const fs = require('fs');
 
-let title = null
-let description = null
-
 // TODO: Create an array of questions for user input
 const questions = () => {
     return inquirer.prompt([
@@ -24,11 +21,23 @@ const questions = () => {
         },
         {
             type: 'input',
+            name: 'github',
+            message: 'What is your github',
+            validate: githubTitle => {
+                if (githubTitle) {
+                    return true;
+                } else {
+                    console.log("Please enter a valid profile")
+                    return false;
+                }
+            }
+        }, 
+        {
+            type: 'input',
             name: 'project',
             message: 'What is the title of your project?',
             validate: projectTitle => {
                 if (projectTitle) {
-                    title = projectTitle
                     return true;
                 } else {
                     console.log("Please enter a valid project title")
@@ -42,7 +51,6 @@ const questions = () => {
             message: 'Give a description of your project',
             validate: descriptionEntry => {
                 if (descriptionEntry) {
-                    description = descriptionEntry
                     return true;
                 } else {
                     console.log("Please provide a description of your project.")
@@ -58,21 +66,35 @@ const questions = () => {
         },
         {
             type: 'input',
-            name: 'installation',
-            message: 'Please enter your installation steps.',
-            when: ({ confirmInstallGuide }) => {
-                if (confirmInstallGuide) {
-                    writeToFile('readme.md', {
-                        title: title, 
-                        description: description,
-                    })
-                    return true; 
+            name: 'Installation',
+            message: 'Please input any installation instructions',
+            validate: installInput => {
+                if (installInput) {
+                    return true;
                 } else {
+                    console.log("Please enter valid installation instructions");
                     return false;
                 }
             }
-        }        
+        },  
+        {
+            type: 'input',
+            name: 'credits',
+            message: 'Please input collaborators',
+            validate: creditInput => {
+                if (creditInput) {
+                    return true;
+                } else {
+                    console.log("Please enter valid collaborators");
+                    return false;
+                }
+            }
+        },   
+        
     ])
+    .then((answers) => {
+        writeToFile('generate-readeMe', answers)
+    })
 }
 
 questions()
